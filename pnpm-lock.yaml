@@ -18,6 +18,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@auto-space/sample-lib':
+        specifier: link:../../libs/sample-lib
+        version: link:../../libs/sample-lib
       '@nestjs/common':
         specifier: ^10.0.0
         version: 10.4.15(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -100,6 +103,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@auto-space/sample-lib':
+        specifier: link:../../libs/sample-lib
+        version: link:../../libs/sample-lib
       next:
         specifier: 14.2.23
         version: 14.2.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0)

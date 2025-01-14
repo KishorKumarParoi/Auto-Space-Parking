@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auto-space/sample-lib": "link:../../libs/sample-lib",
     "next": "14.2.23",
     "react": "18.2.0",
     "react-dom": "18.2.0"
