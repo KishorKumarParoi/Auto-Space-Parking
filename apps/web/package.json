@@ -1,24 +1,24 @@
 {
-  "name": "@auto-space/web",
+  "name": "@autospace/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3001",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@auto-space/sample-lib": "link:../../libs/sample-lib",
+    "@autospace/sample-lib": "link:../../libs/sample-lib",
     "next": "14.2.23",
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.2.0",
     "@types/node": "^20.17.12",
-    "@types/react": "^18.0.27",
-    "@types/react-dom": "^18.0.10",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.23",
     "postcss": "^8.5.1",

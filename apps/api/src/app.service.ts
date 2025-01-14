@@ -1,8 +1,9 @@
-import { add } from '@auto-space/sample-lib';
+import { add } from '@autospace/sample-lib';
 import { Injectable } from '@nestjs/common';
+
 @Injectable()
 export class AppService {
   getHello(): string {
-    return 'Hello Kishor Kumar Paroi! ' + add(100, 200);
+    return 'Hello World, Kishor Kumar Paroi ' + add(290, 40);
   }
 }
