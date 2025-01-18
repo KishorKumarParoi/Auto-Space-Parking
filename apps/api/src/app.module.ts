@@ -2,14 +2,23 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
+import { JwtModule } from '@nestjs/jwt'
 import { join } from 'path'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { UsersModule } from './users/users.module'
+import { PrismaModule } from './common/prisma/prisma.module'
+import { UsersModule } from './models/users/users.module'
 
+// TODO: Move to utils/lib
+const MAX_AGE = '1d'
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: MAX_AGE },
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       introspection: true,
@@ -19,6 +28,7 @@ import { UsersModule } from './users/users.module'
         numberScalarMode: 'integer',
       },
     }),
+    PrismaModule,
     UsersModule,
   ],
   controllers: [AppController],
