@@ -23,6 +23,7 @@ export class UserWhereInputStrict
   createdAt: DateTimeFilter
   updatedAt: DateTimeFilter
   name: StringFilter
+  image: StringFilter
   // Todo: Add the below field decorator only to the $Enums types.
   // @Field(() => $Enums.x)
 

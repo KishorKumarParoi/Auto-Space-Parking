@@ -4,6 +4,7 @@
 
 type User {
   name: String
+  image: String
   uid: String!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -24,6 +25,7 @@ enum UserScalarFieldEnum {
   createdAt
   updatedAt
   name
+  image
 }
 
 input UserWhereInput {
@@ -31,6 +33,7 @@ input UserWhereInput {
   createdAt: DateTimeFilter
   updatedAt: DateTimeFilter
   name: StringFilter
+  image: StringFilter
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
@@ -71,6 +74,7 @@ input UserOrderByWithRelationInput {
   createdAt: SortOrder
   updatedAt: SortOrder
   name: SortOrder
+  image: SortOrder
 }
 
 enum SortOrder {
