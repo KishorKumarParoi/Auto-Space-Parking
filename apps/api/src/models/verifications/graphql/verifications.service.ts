@@ -1,0 +1,40 @@
+import { Injectable } from '@nestjs/common'
+import { PrismaService } from 'src/common/prisma/prisma.service'
+import { CreateVerificationInput } from './dtos/create-verification.input'
+import {
+  FindManyVerificationArgs,
+  FindUniqueVerificationArgs,
+} from './dtos/find.args'
+import { UpdateVerificationInput } from './dtos/update-verification.input'
+
+@Injectable()
+export class VerificationsService {
+  constructor(private readonly prisma: PrismaService) {}
+  create(createVerificationInput: CreateVerificationInput) {
+    console.log('createVerificationInput', createVerificationInput)
+    // return this.prisma.verification.create({
+    //   data: createVerificationInput,
+    // })
+  }
+
+  findAll(args: FindManyVerificationArgs) {
+    return this.prisma.verification.findMany(args)
+  }
+
+  findOne(args: FindUniqueVerificationArgs) {
+    return this.prisma.verification.findUnique(args)
+  }
+
+  update(updateVerificationInput: UpdateVerificationInput) {
+    console.log('updateVerificationInput', updateVerificationInput)
+    // const { id, ...data } = updateVerificationInput
+    // return this.prisma.verification.update({
+    //   where: { id },
+    //   data: data,
+    // })
+  }
+
+  remove(args: FindUniqueVerificationArgs) {
+    return this.prisma.verification.delete(args)
+  }
+}

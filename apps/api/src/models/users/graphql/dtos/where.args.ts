@@ -22,6 +22,39 @@ export class UserWhereInputStrict
       >
     >
 {
+  Manager:
+    | (Prisma.Without<
+        Prisma.ManagerNullableScalarRelationFilter,
+        Prisma.ManagerWhereInput
+      > &
+        Prisma.ManagerWhereInput)
+    | (Prisma.Without<
+        Prisma.ManagerWhereInput,
+        Prisma.ManagerNullableScalarRelationFilter
+      > &
+        Prisma.ManagerNullableScalarRelationFilter)
+  Valet:
+    | (Prisma.Without<
+        Prisma.ValetNullableScalarRelationFilter,
+        Prisma.ValetWhereInput
+      > &
+        Prisma.ValetWhereInput)
+    | (Prisma.Without<
+        Prisma.ValetWhereInput,
+        Prisma.ValetNullableScalarRelationFilter
+      > &
+        Prisma.ValetNullableScalarRelationFilter)
+  Customer:
+    | (Prisma.Without<
+        Prisma.CustomerNullableScalarRelationFilter,
+        Prisma.CustomerWhereInput
+      > &
+        Prisma.CustomerWhereInput)
+    | (Prisma.Without<
+        Prisma.CustomerWhereInput,
+        Prisma.CustomerNullableScalarRelationFilter
+      > &
+        Prisma.CustomerNullableScalarRelationFilter)
   uid: StringFilter
   createdAt: DateTimeFilter
   updatedAt: DateTimeFilter
