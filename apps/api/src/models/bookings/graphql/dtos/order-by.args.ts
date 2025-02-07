@@ -40,10 +40,9 @@ export class BookingOrderByWithRelationInputStrict
   slotId: Prisma.SortOrder
   @Field(() => Prisma.SortOrder)
   customerId: Prisma.SortOrder
-  @Field(() => Prisma.SortOrder)
-  Slot: SlotOrderByWithRelationInput
-  Customer: CustomerOrderByWithRelationInput
   ValetAssignment: ValetAssignmentOrderByWithRelationInput
+  Customer: CustomerOrderByWithRelationInput
+  Slot: SlotOrderByWithRelationInput
   BookingTimeline: BookingTimelineOrderByRelationAggregateInput
   // Todo: Add below field decorator to the SortOrder properties.
   // @Field(() => Prisma.SortOrder)

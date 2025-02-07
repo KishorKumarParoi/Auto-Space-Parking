@@ -33,8 +33,6 @@ export class BookingTimelineWhereInputStrict
   Booking: BookingRelationFilter
   Valet: ValetRelationFilter
   Manager: ManagerRelationFilter
-  // Todo: Add the below field decorator only to the $Enums types.
-  // @Field(() => $Enums.x)
 
   AND: BookingTimelineWhereInput[]
   OR: BookingTimelineWhereInput[]

@@ -1,12 +1,13 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import { ReviewsService } from './reviews.service'
+import { Review } from './entity/review.entity'
+import { FindManyReviewArgs, FindUniqueReviewArgs } from './dtos/find.args'
+import { CreateReviewInput } from './dtos/create-review.input'
+import { UpdateReviewInput } from './dtos/update-review.input'
+import { checkRowLevelPermission } from 'src/common/auth/util'
+import { GetUserType } from 'src/common/types'
 import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
 import { PrismaService } from 'src/common/prisma/prisma.service'
-import { GetUserType } from 'src/common/types'
-import { CreateReviewInput } from './dtos/create-review.input'
-import { FindManyReviewArgs, FindUniqueReviewArgs } from './dtos/find.args'
-import { UpdateReviewInput } from './dtos/update-review.input'
-import { Review } from './entity/review.entity'
-import { ReviewsService } from './reviews.service'
 
 @Resolver(() => Review)
 export class ReviewsResolver {
@@ -21,8 +22,7 @@ export class ReviewsResolver {
     @Args('createReviewInput') args: CreateReviewInput,
     @GetUser() user: GetUserType,
   ) {
-    console.log('user', user)
-    // checkRowLevelPermission(user, args.uid)
+    checkRowLevelPermission(user, args.customerId)
     return this.reviewsService.create(args)
   }
 
@@ -42,11 +42,10 @@ export class ReviewsResolver {
     @Args('updateReviewInput') args: UpdateReviewInput,
     @GetUser() user: GetUserType,
   ) {
-    console.log('user', user)
-    // const review = await this.prisma.review.findUnique({
-    //   where: { id: args.id },
-    // })
-    // checkRowLevelPermission(user, review.uid)
+    const review = await this.prisma.review.findUnique({
+      where: { id: args.id },
+    })
+    checkRowLevelPermission(user, review.customerId)
     return this.reviewsService.update(args)
   }
 
@@ -56,9 +55,8 @@ export class ReviewsResolver {
     @Args() args: FindUniqueReviewArgs,
     @GetUser() user: GetUserType,
   ) {
-    console.log('user', user)
-    // const review = await this.prisma.review.findUnique(args)
-    // checkRowLevelPermission(user, review.uid)
+    const review = await this.prisma.review.findUnique(args)
+    checkRowLevelPermission(user, review.customerId)
     return this.reviewsService.remove(args)
   }
 }

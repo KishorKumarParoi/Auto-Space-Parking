@@ -12,6 +12,7 @@ export class AdminOrderByWithRelationInputStrict
       Prisma.AdminOrderByWithRelationInput
     >
 {
+  Verifications: VerificationOrderByRelationAggregateInput
   @Field(() => Prisma.SortOrder)
   uid: Prisma.SortOrder
   @Field(() => Prisma.SortOrder)
@@ -19,7 +20,6 @@ export class AdminOrderByWithRelationInputStrict
   @Field(() => Prisma.SortOrder)
   updatedAt: Prisma.SortOrder
   User: UserOrderByWithRelationInput
-  Verifications: VerificationOrderByRelationAggregateInput
   // Todo: Add below field decorator to the SortOrder properties.
   // @Field(() => Prisma.SortOrder)
 }

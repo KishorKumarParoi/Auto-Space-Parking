@@ -1,27 +1,28 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  Param,
-  Patch,
   Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
   Query,
 } from '@nestjs/common'
 
+import { PrismaService } from 'src/common/prisma/prisma.service'
+import { ApiTags } from '@nestjs/swagger'
+import { CreateSlot } from './dtos/create.dto'
+import { SlotQueryDto } from './dtos/query.dto'
+import { UpdateSlot } from './dtos/update.dto'
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiTags,
 } from '@nestjs/swagger'
-import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
-import { PrismaService } from 'src/common/prisma/prisma.service'
-import { GetUserType } from 'src/common/types'
-import { CreateSlot } from './dtos/create.dto'
-import { SlotQueryDto } from './dtos/query.dto'
-import { UpdateSlot } from './dtos/update.dto'
 import { SlotEntity } from './entity/slot.entity'
+import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
+import { GetUserType } from 'src/common/types'
+import { checkRowLevelPermission } from 'src/common/auth/util'
 
 @ApiTags('slots')
 @Controller('slots')
@@ -32,9 +33,18 @@ export class SlotsController {
   @ApiBearerAuth()
   @ApiCreatedResponse({ type: SlotEntity })
   @Post()
-  create(@Body() createSlotDto: CreateSlot, @GetUser() user: GetUserType) {
-    // checkRowLevelPermission(user, createSlotDto.uid)
-    console.log('user', user)
+  async create(
+    @Body() createSlotDto: CreateSlot,
+    @GetUser() user: GetUserType,
+  ) {
+    const garage = await this.prisma.garage.findUnique({
+      where: { id: createSlotDto.garageId },
+      include: { Company: { include: { Managers: true } } },
+    })
+    checkRowLevelPermission(
+      user,
+      garage.Company.Managers.map((manager) => manager.uid),
+    )
     return this.prisma.slot.create({ data: createSlotDto })
   }
 
@@ -63,9 +73,22 @@ export class SlotsController {
     @Body() updateSlotDto: UpdateSlot,
     @GetUser() user: GetUserType,
   ) {
-    console.log('user', user)
-    // const slot = await this.prisma.slot.findUnique({ where: { id } })
-    // checkRowLevelPermission(user, slot.uid)
+    const slot = await this.prisma.slot.findUnique({
+      where: { id },
+      include: {
+        Garage: {
+          include: {
+            Company: {
+              include: { Managers: true },
+            },
+          },
+        },
+      },
+    })
+    checkRowLevelPermission(
+      user,
+      slot.Garage.Company.Managers.map((man) => man.uid),
+    )
     return this.prisma.slot.update({
       where: { id },
       data: updateSlotDto,
@@ -76,9 +99,22 @@ export class SlotsController {
   @AllowAuthenticated()
   @Delete(':id')
   async remove(@Param('id') id: number, @GetUser() user: GetUserType) {
-    console.log('user', user)
-    // const slot = await this.prisma.slot.findUnique({ where: { id } })
-    // checkRowLevelPermission(user, slot.uid)
+    const slot = await this.prisma.slot.findUnique({
+      where: { id },
+      include: {
+        Garage: {
+          include: {
+            Company: {
+              include: { Managers: true },
+            },
+          },
+        },
+      },
+    })
+    checkRowLevelPermission(
+      user,
+      slot.Garage.Company.Managers.map((man) => man.uid),
+    )
     return this.prisma.slot.delete({ where: { id } })
   }
 }

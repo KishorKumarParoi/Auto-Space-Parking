@@ -1,15 +1,15 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
-import { PrismaService } from 'src/common/prisma/prisma.service'
-import { GetUserType } from 'src/common/types'
-import { CreateVerificationInput } from './dtos/create-verification.input'
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import { VerificationsService } from './verifications.service'
+import { Verification } from './entity/verification.entity'
 import {
   FindManyVerificationArgs,
   FindUniqueVerificationArgs,
 } from './dtos/find.args'
+import { CreateVerificationInput } from './dtos/create-verification.input'
 import { UpdateVerificationInput } from './dtos/update-verification.input'
-import { Verification } from './entity/verification.entity'
-import { VerificationsService } from './verifications.service'
+import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
+import { PrismaService } from 'src/common/prisma/prisma.service'
+import { GetUserType } from 'src/common/types'
 
 @Resolver(() => Verification)
 export class VerificationsResolver {
@@ -24,8 +24,7 @@ export class VerificationsResolver {
     @Args('createVerificationInput') args: CreateVerificationInput,
     @GetUser() user: GetUserType,
   ) {
-    console.log('user', user)
-    return this.verificationsService.create(args)
+    return this.verificationsService.create(args, user.uid)
   }
 
   @Query(() => [Verification], { name: 'verifications' })

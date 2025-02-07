@@ -1,16 +1,16 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
-import { checkRowLevelPermission } from 'src/common/auth/util'
-import { PrismaService } from 'src/common/prisma/prisma.service'
-import { GetUserType } from 'src/common/types'
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { BookingTimelinesService } from './booking-timelines.service'
-import { CreateBookingTimelineInput } from './dtos/create-booking-timeline.input'
+import { BookingTimeline } from './entity/booking-timeline.entity'
 import {
   FindManyBookingTimelineArgs,
   FindUniqueBookingTimelineArgs,
 } from './dtos/find.args'
+import { CreateBookingTimelineInput } from './dtos/create-booking-timeline.input'
 import { UpdateBookingTimelineInput } from './dtos/update-booking-timeline.input'
-import { BookingTimeline } from './entity/booking-timeline.entity'
+import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
+import { PrismaService } from 'src/common/prisma/prisma.service'
+import { GetUserType } from 'src/common/types'
+import { checkRowLevelPermission } from 'src/common/auth/util'
 
 @Resolver(() => BookingTimeline)
 export class BookingTimelinesResolver {
@@ -19,14 +19,44 @@ export class BookingTimelinesResolver {
     private readonly prisma: PrismaService,
   ) {}
 
-  @AllowAuthenticated()
+  @AllowAuthenticated('admin', 'manager')
   @Mutation(() => BookingTimeline)
-  createBookingTimeline(
-    @Args('createBookingTimelineInput') args: CreateBookingTimelineInput,
+  async createBookingTimeline(
+    @Args('createBookingTimelineInput')
+    { bookingId, status }: CreateBookingTimelineInput,
     @GetUser() user: GetUserType,
   ) {
-    checkRowLevelPermission(user, args.bookingId.toString())
-    return this.bookingTimelinesService.create(args)
+    const booking = await this.prisma.booking.findUnique({
+      where: { id: bookingId },
+      select: {
+        Slot: {
+          select: {
+            Garage: {
+              select: {
+                Company: {
+                  select: { Managers: { select: { uid: true } } },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+    checkRowLevelPermission(
+      user,
+      booking.Slot.Garage.Company.Managers.map((manager) => manager.uid),
+    )
+
+    const [updatedBooking, bookingTimeline] = await this.prisma.$transaction([
+      this.prisma.booking.update({
+        data: { status: status },
+        where: { id: bookingId },
+      }),
+      this.prisma.bookingTimeline.create({
+        data: { bookingId, managerId: user.uid, status },
+      }),
+    ])
+    return bookingTimeline
   }
 
   @Query(() => [BookingTimeline], { name: 'bookingTimelines' })
@@ -39,27 +69,17 @@ export class BookingTimelinesResolver {
     return this.bookingTimelinesService.findOne(args)
   }
 
-  @AllowAuthenticated()
+  @AllowAuthenticated('admin')
   @Mutation(() => BookingTimeline)
   async updateBookingTimeline(
     @Args('updateBookingTimelineInput') args: UpdateBookingTimelineInput,
-    @GetUser() user: GetUserType,
   ) {
-    const bookingTimeline = await this.prisma.bookingTimeline.findUnique({
-      where: { id: args.id },
-    })
-    checkRowLevelPermission(user, bookingTimeline.bookingId.toString())
     return this.bookingTimelinesService.update(args)
   }
 
-  @AllowAuthenticated()
+  @AllowAuthenticated('admin')
   @Mutation(() => BookingTimeline)
-  async removeBookingTimeline(
-    @Args() args: FindUniqueBookingTimelineArgs,
-    @GetUser() user: GetUserType,
-  ) {
-    const bookingTimeline = await this.prisma.bookingTimeline.findUnique(args)
-    checkRowLevelPermission(user, bookingTimeline.bookingId.toString())
+  async removeBookingTimeline(@Args() args: FindUniqueBookingTimelineArgs) {
     return this.bookingTimelinesService.remove(args)
   }
 }

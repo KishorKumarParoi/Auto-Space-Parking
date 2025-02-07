@@ -1,4 +1,4 @@
-import { InputType, PartialType } from '@nestjs/graphql'
+import { Field, InputType, PartialType } from '@nestjs/graphql'
 import { Prisma } from '@prisma/client'
 import {
   DateTimeFilter,
@@ -27,8 +27,6 @@ export class AddressWhereInputStrict
   lng: FloatFilter
   garageId: IntFilter
   Garage: GarageRelationFilter
-  // Todo: Add the below field decorator only to the $Enums types.
-  // @Field(() => $Enums.x)
 
   AND: AddressWhereInput[]
   OR: AddressWhereInput[]

@@ -13,6 +13,7 @@ export class CustomerOrderByWithRelationInputStrict
       Prisma.CustomerOrderByWithRelationInput
     >
 {
+  User: UserOrderByWithRelationInput
   @Field(() => Prisma.SortOrder)
   uid: Prisma.SortOrder
   @Field(() => Prisma.SortOrder)
@@ -21,8 +22,7 @@ export class CustomerOrderByWithRelationInputStrict
   updatedAt: Prisma.SortOrder
   @Field(() => Prisma.SortOrder)
   displayName: Prisma.SortOrder
-  @Field(() => Prisma.SortOrder)
-  User: UserOrderByWithRelationInput
+
   Bookings: BookingOrderByRelationAggregateInput
   Reviews: ReviewOrderByRelationAggregateInput
   // Todo: Add below field decorator to the SortOrder properties.

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
-import { SlotsResolver } from './graphql/slots.resolver'
 import { SlotsService } from './graphql/slots.service'
+import { SlotsResolver } from './graphql/slots.resolver'
 import { SlotsController } from './rest/slots.controller'
 
 @Module({

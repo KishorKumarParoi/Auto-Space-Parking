@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { PrismaService } from 'src/common/prisma/prisma.service'
-import { CreateBookingTimelineInput } from './dtos/create-booking-timeline.input'
 import {
   FindManyBookingTimelineArgs,
   FindUniqueBookingTimelineArgs,
 } from './dtos/find.args'
+import { PrismaService } from 'src/common/prisma/prisma.service'
+import { CreateBookingTimelineInput } from './dtos/create-booking-timeline.input'
 import { UpdateBookingTimelineInput } from './dtos/update-booking-timeline.input'
 
 @Injectable()

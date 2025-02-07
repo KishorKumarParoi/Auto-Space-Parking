@@ -1,15 +1,29 @@
 import { Injectable } from '@nestjs/common'
+import { FindManyCompanyArgs, FindUniqueCompanyArgs } from './dtos/find.args'
 import { PrismaService } from 'src/common/prisma/prisma.service'
 import { CreateCompanyInput } from './dtos/create-company.input'
-import { FindManyCompanyArgs, FindUniqueCompanyArgs } from './dtos/find.args'
 import { UpdateCompanyInput } from './dtos/update-company.input'
 
 @Injectable()
 export class CompaniesService {
   constructor(private readonly prisma: PrismaService) {}
-  create(createCompanyInput: CreateCompanyInput) {
+  async create({
+    description,
+    displayName,
+    managerId,
+    managerName,
+  }: CreateCompanyInput) {
     return this.prisma.company.create({
-      data: createCompanyInput,
+      data: {
+        description,
+        displayName,
+        Managers: {
+          create: {
+            displayName: managerName,
+            uid: managerId,
+          },
+        },
+      },
     })
   }
 

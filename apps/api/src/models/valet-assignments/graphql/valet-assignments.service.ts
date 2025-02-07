@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { PrismaService } from 'src/common/prisma/prisma.service'
-import { CreateValetAssignmentInput } from './dtos/create-valet-assignment.input'
 import {
   FindManyValetAssignmentArgs,
   FindUniqueValetAssignmentArgs,
 } from './dtos/find.args'
+import { PrismaService } from 'src/common/prisma/prisma.service'
+import { CreateValetAssignmentInput } from './dtos/create-valet-assignment.input'
 import { UpdateValetAssignmentInput } from './dtos/update-valet-assignment.input'
 
 @Injectable()
@@ -25,12 +25,11 @@ export class ValetAssignmentsService {
   }
 
   update(updateValetAssignmentInput: UpdateValetAssignmentInput) {
-    console.log('updateValetAssignmentInput', updateValetAssignmentInput)
-    // const { id, ...data } = updateValetAssignmentInput
-    // return this.prisma.valetAssignment.update({
-    //   where: { id },
-    //   data: data,
-    // })
+    const { bookingId, ...data } = updateValetAssignmentInput
+    return this.prisma.valetAssignment.update({
+      where: { bookingId },
+      data: data,
+    })
   }
 
   remove(args: FindUniqueValetAssignmentArgs) {

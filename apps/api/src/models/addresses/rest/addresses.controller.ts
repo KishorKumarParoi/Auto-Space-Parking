@@ -1,27 +1,28 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  Param,
-  Patch,
   Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
   Query,
 } from '@nestjs/common'
 
+import { PrismaService } from 'src/common/prisma/prisma.service'
+import { ApiTags } from '@nestjs/swagger'
+import { CreateAddress } from './dtos/create.dto'
+import { AddressQueryDto } from './dtos/query.dto'
+import { UpdateAddress } from './dtos/update.dto'
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiTags,
 } from '@nestjs/swagger'
-import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
-import { PrismaService } from 'src/common/prisma/prisma.service'
-import { GetUserType } from 'src/common/types'
-import { CreateAddress } from './dtos/create.dto'
-import { AddressQueryDto } from './dtos/query.dto'
-import { UpdateAddress } from './dtos/update.dto'
 import { AddressEntity } from './entity/address.entity'
+import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
+import { GetUserType } from 'src/common/types'
+import { checkRowLevelPermission } from 'src/common/auth/util'
 
 @ApiTags('addresses')
 @Controller('addresses')
@@ -32,12 +33,18 @@ export class AddressesController {
   @ApiBearerAuth()
   @ApiCreatedResponse({ type: AddressEntity })
   @Post()
-  create(
+  async create(
     @Body() createAddressDto: CreateAddress,
     @GetUser() user: GetUserType,
   ) {
-    console.log('user', user)
-    // checkRowLevelPermission(user, createAddressDto.uid)
+    const garage = await this.prisma.garage.findUnique({
+      where: { id: createAddressDto.garageId },
+      include: { Company: { include: { Managers: true } } },
+    })
+    checkRowLevelPermission(
+      user,
+      garage.Company.Managers.map((manager) => manager.uid),
+    )
     return this.prisma.address.create({ data: createAddressDto })
   }
 
@@ -66,9 +73,16 @@ export class AddressesController {
     @Body() updateAddressDto: UpdateAddress,
     @GetUser() user: GetUserType,
   ) {
-    console.log('user', user)
-    // const address = await this.prisma.address.findUnique({ where: { id } })
-    // checkRowLevelPermission(user, address.uid)
+    const address = await this.prisma.address.findUnique({
+      where: { id },
+      include: {
+        Garage: { include: { Company: { include: { Managers: true } } } },
+      },
+    })
+    checkRowLevelPermission(
+      user,
+      address.Garage.Company.Managers.map((manager) => manager.uid),
+    )
     return this.prisma.address.update({
       where: { id },
       data: updateAddressDto,
@@ -79,9 +93,16 @@ export class AddressesController {
   @AllowAuthenticated()
   @Delete(':id')
   async remove(@Param('id') id: number, @GetUser() user: GetUserType) {
-    console.log('user', user)
-    // const address = await this.prisma.address.findUnique({ where: { id } })
-    // checkRowLevelPermission(user, address.uid)
+    const address = await this.prisma.address.findUnique({
+      where: { id },
+      include: {
+        Garage: { include: { Company: { include: { Managers: true } } } },
+      },
+    })
+    checkRowLevelPermission(
+      user,
+      address.Garage.Company.Managers.map((manager) => manager.uid),
+    )
     return this.prisma.address.delete({ where: { id } })
   }
 }

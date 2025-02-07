@@ -21,6 +21,7 @@ export class CompanyOrderByWithRelationInputStrict
   updatedAt: Prisma.SortOrder
   @Field(() => Prisma.SortOrder)
   displayName: Prisma.SortOrder
+  @Field(() => Prisma.SortOrder)
   description: Prisma.SortOrder
   Garages: GarageOrderByRelationAggregateInput
   Managers: ManagerOrderByRelationAggregateInput

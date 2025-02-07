@@ -1,28 +1,28 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  Param,
-  Patch,
   Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
   Query,
 } from '@nestjs/common'
 
+import { PrismaService } from 'src/common/prisma/prisma.service'
+import { ApiTags } from '@nestjs/swagger'
+import { CreateGarage } from './dtos/create.dto'
+import { GarageQueryDto } from './dtos/query.dto'
+import { UpdateGarage } from './dtos/update.dto'
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiTags,
 } from '@nestjs/swagger'
-import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
-import { checkRowLevelPermission } from 'src/common/auth/util'
-import { PrismaService } from 'src/common/prisma/prisma.service'
-import { GetUserType } from 'src/common/types'
-import { CreateGarage } from './dtos/create.dto'
-import { GarageQueryDto } from './dtos/query.dto'
-import { UpdateGarage } from './dtos/update.dto'
 import { GarageEntity } from './entity/garage.entity'
+import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
+import { GetUserType } from 'src/common/types'
+import { checkRowLevelPermission } from 'src/common/auth/util'
 
 @ApiTags('garages')
 @Controller('garages')
@@ -33,8 +33,18 @@ export class GaragesController {
   @ApiBearerAuth()
   @ApiCreatedResponse({ type: GarageEntity })
   @Post()
-  create(@Body() createGarageDto: CreateGarage, @GetUser() user: GetUserType) {
-    checkRowLevelPermission(user, createGarageDto.companyId.toString())
+  async create(
+    @Body() createGarageDto: CreateGarage,
+    @GetUser() user: GetUserType,
+  ) {
+    const company = await this.prisma.company.findUnique({
+      where: { id: createGarageDto.companyId },
+      include: { Managers: true },
+    })
+    checkRowLevelPermission(
+      user,
+      company.Managers.map((manager) => manager.uid),
+    )
     return this.prisma.garage.create({ data: createGarageDto })
   }
 
@@ -63,8 +73,14 @@ export class GaragesController {
     @Body() updateGarageDto: UpdateGarage,
     @GetUser() user: GetUserType,
   ) {
-    const garage = await this.prisma.garage.findUnique({ where: { id } })
-    checkRowLevelPermission(user, garage.companyId.toString())
+    const garage = await this.prisma.garage.findUnique({
+      where: { id },
+      include: { Company: { include: { Managers: true } } },
+    })
+    checkRowLevelPermission(
+      user,
+      garage.Company.Managers.map((manager) => manager.uid),
+    )
     return this.prisma.garage.update({
       where: { id },
       data: updateGarageDto,
@@ -75,8 +91,14 @@ export class GaragesController {
   @AllowAuthenticated()
   @Delete(':id')
   async remove(@Param('id') id: number, @GetUser() user: GetUserType) {
-    const garage = await this.prisma.garage.findUnique({ where: { id } })
-    checkRowLevelPermission(user, garage.companyId.toString())
+    const garage = await this.prisma.garage.findUnique({
+      where: { id },
+      include: { Company: { include: { Managers: true } } },
+    })
+    checkRowLevelPermission(
+      user,
+      garage.Company.Managers.map((manager) => manager.uid),
+    )
     return this.prisma.garage.delete({ where: { id } })
   }
 }

@@ -1,26 +1,26 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  Param,
-  Patch,
   Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
   Query,
 } from '@nestjs/common'
 
+import { PrismaService } from 'src/common/prisma/prisma.service'
+import { ApiTags } from '@nestjs/swagger'
+import { CreateVerification } from './dtos/create.dto'
+import { VerificationQueryDto } from './dtos/query.dto'
+import { UpdateVerification } from './dtos/update.dto'
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiTags,
 } from '@nestjs/swagger'
-import { AllowAuthenticated } from 'src/common/auth/auth.decorator'
-import { PrismaService } from 'src/common/prisma/prisma.service'
-import { CreateVerification } from './dtos/create.dto'
-import { VerificationQueryDto } from './dtos/query.dto'
-import { UpdateVerification } from './dtos/update.dto'
 import { VerificationEntity } from './entity/verification.entity'
+import { AllowAuthenticated } from 'src/common/auth/auth.decorator'
 
 @ApiTags('verifications')
 @Controller('verifications')
@@ -32,8 +32,7 @@ export class VerificationsController {
   @ApiCreatedResponse({ type: VerificationEntity })
   @Post()
   create(@Body() createVerificationDto: CreateVerification) {
-    console.log('createVerificationDto', createVerificationDto)
-    // return this.prisma.verification.create({ data: createVerificationDto })
+    return this.prisma.verification.create({ data: createVerificationDto })
   }
 
   @ApiOkResponse({ type: [VerificationEntity] })
@@ -60,11 +59,10 @@ export class VerificationsController {
     @Param('garageId') garageId: number,
     @Body() updateVerificationDto: UpdateVerification,
   ) {
-    console.log('updateVerificationDto', updateVerificationDto)
-    // return this.prisma.verification.update({
-    //   where: { garageId },
-    //   data: updateVerificationDto,
-    // })
+    return this.prisma.verification.update({
+      where: { garageId },
+      data: updateVerificationDto,
+    })
   }
 
   @ApiBearerAuth()

@@ -1,13 +1,21 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
-import { checkRowLevelPermission } from 'src/common/auth/util'
-import { PrismaService } from 'src/common/prisma/prisma.service'
-import { GetUserType } from 'src/common/types'
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql'
 import { AddressesService } from './addresses.service'
-import { CreateAddressInput } from './dtos/create-address.input'
-import { FindManyAddressArgs, FindUniqueAddressArgs } from './dtos/find.args'
-import { UpdateAddressInput } from './dtos/update-address.input'
 import { Address } from './entity/address.entity'
+import { FindManyAddressArgs, FindUniqueAddressArgs } from './dtos/find.args'
+import { CreateAddressInput } from './dtos/create-address.input'
+import { UpdateAddressInput } from './dtos/update-address.input'
+import { checkRowLevelPermission } from 'src/common/auth/util'
+import { GetUserType } from 'src/common/types'
+import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
+import { PrismaService } from 'src/common/prisma/prisma.service'
+import { Garage } from 'src/models/garages/graphql/entity/garage.entity'
 
 @Resolver(() => Address)
 export class AddressesResolver {
@@ -18,12 +26,18 @@ export class AddressesResolver {
 
   @AllowAuthenticated()
   @Mutation(() => Address)
-  createAddress(
+  async createAddress(
     @Args('createAddressInput') args: CreateAddressInput,
     @GetUser() user: GetUserType,
   ) {
-    console.log('user', user)
-    // checkRowLevelPermission(user, args.id.toString())
+    const garage = await this.prisma.garage.findUnique({
+      where: { id: args.garageId },
+      include: { Company: { include: { Managers: true } } },
+    })
+    checkRowLevelPermission(
+      user,
+      garage.Company.Managers.map((man) => man.uid),
+    )
     return this.addressesService.create(args)
   }
 
@@ -45,8 +59,16 @@ export class AddressesResolver {
   ) {
     const address = await this.prisma.address.findUnique({
       where: { id: args.id },
+      include: {
+        Garage: {
+          include: { Company: { include: { Managers: true } } },
+        },
+      },
     })
-    checkRowLevelPermission(user, address.id.toString())
+    checkRowLevelPermission(
+      user,
+      address.Garage.Company.Managers.map((man) => man.uid),
+    )
     return this.addressesService.update(args)
   }
 
@@ -56,8 +78,23 @@ export class AddressesResolver {
     @Args() args: FindUniqueAddressArgs,
     @GetUser() user: GetUserType,
   ) {
-    const address = await this.prisma.address.findUnique(args)
-    checkRowLevelPermission(user, address.id.toString())
+    const address = await this.prisma.address.findUnique({
+      where: { id: args.where.id },
+      include: {
+        Garage: {
+          include: { Company: { include: { Managers: true } } },
+        },
+      },
+    })
+    checkRowLevelPermission(
+      user,
+      address.Garage.Company.Managers.map((man) => man.uid),
+    )
     return this.addressesService.remove(args)
+  }
+
+  @ResolveField(() => Garage, { nullable: true })
+  garage(@Parent() address: Address) {
+    return this.prisma.company.findFirst({ where: { id: address.garageId } })
   }
 }

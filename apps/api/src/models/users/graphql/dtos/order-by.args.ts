@@ -12,7 +12,7 @@ export class UserOrderByWithRelationInputStrict
       UserOrderByWithRelationInputStrict,
       Omit<
         Prisma.UserOrderByWithRelationInput,
-        'Credentials' | 'Admin' | 'AuthProvider' | 'image'
+        'Credentials' | 'AuthProvider' | 'Admin' | 'image'
       >
     >
 {
@@ -27,6 +27,7 @@ export class UserOrderByWithRelationInputStrict
   updatedAt: Prisma.SortOrder
   @Field(() => Prisma.SortOrder)
   name: Prisma.SortOrder
+
   // Todo: Add below field decorator to the SortOrder properties.
   // @Field(() => Prisma.SortOrder)
 }

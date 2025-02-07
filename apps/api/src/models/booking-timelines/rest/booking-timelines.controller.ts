@@ -1,27 +1,27 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  Param,
-  Patch,
   Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
   Query,
 } from '@nestjs/common'
 
+import { PrismaService } from 'src/common/prisma/prisma.service'
+import { ApiTags } from '@nestjs/swagger'
+import { CreateBookingTimeline } from './dtos/create.dto'
+import { BookingTimelineQueryDto } from './dtos/query.dto'
+import { UpdateBookingTimeline } from './dtos/update.dto'
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiTags,
 } from '@nestjs/swagger'
 import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
-import { checkRowLevelPermission } from 'src/common/auth/util'
-import { PrismaService } from 'src/common/prisma/prisma.service'
 import { GetUserType } from 'src/common/types'
-import { CreateBookingTimeline } from './dtos/create.dto'
-import { BookingTimelineQueryDto } from './dtos/query.dto'
-import { UpdateBookingTimeline } from './dtos/update.dto'
+import { checkRowLevelPermission } from 'src/common/auth/util'
 import { BookingTimelineEntity } from './entity/booking-timeline.entity'
 
 @ApiTags('booking-timelines')
@@ -37,7 +37,7 @@ export class BookingTimelinesController {
     @Body() createBookingTimelineDto: CreateBookingTimeline,
     @GetUser() user: GetUserType,
   ) {
-    checkRowLevelPermission(user, createBookingTimelineDto.bookingId.toString())
+    checkRowLevelPermission(user, createBookingTimelineDto.managerId)
     return this.prisma.bookingTimeline.create({
       data: createBookingTimelineDto,
     })
@@ -71,7 +71,7 @@ export class BookingTimelinesController {
     const bookingTimeline = await this.prisma.bookingTimeline.findUnique({
       where: { id },
     })
-    checkRowLevelPermission(user, bookingTimeline.bookingId.toString())
+    checkRowLevelPermission(user, bookingTimeline.managerId)
     return this.prisma.bookingTimeline.update({
       where: { id },
       data: updateBookingTimelineDto,
@@ -85,7 +85,7 @@ export class BookingTimelinesController {
     const bookingTimeline = await this.prisma.bookingTimeline.findUnique({
       where: { id },
     })
-    checkRowLevelPermission(user, bookingTimeline.bookingId.toString())
+    checkRowLevelPermission(user, bookingTimeline.managerId)
     return this.prisma.bookingTimeline.delete({ where: { id } })
   }
 }

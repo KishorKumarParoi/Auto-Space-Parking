@@ -1,4 +1,4 @@
-import { InputType, PartialType } from '@nestjs/graphql'
+import { Field, InputType, PartialType } from '@nestjs/graphql'
 import { Prisma } from '@prisma/client'
 import {
   DateTimeFilter,
@@ -16,7 +16,8 @@ export class ReviewWhereUniqueInput {
 
 @InputType()
 export class ReviewWhereInputStrict
-  implements RestrictProperties<ReviewWhereInputStrict, Prisma.ReviewWhereInput>
+  implements
+    RestrictProperties<ReviewWhereInputStrict, Prisma.ReviewWhereInput>
 {
   id: IntFilter
   createdAt: DateTimeFilter

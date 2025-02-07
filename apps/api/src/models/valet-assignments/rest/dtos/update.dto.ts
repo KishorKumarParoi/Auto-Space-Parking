@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/swagger'
-import { ValetAssignment } from '@prisma/client'
 import { CreateValetAssignment } from './create.dto'
+import { ValetAssignment } from '@prisma/client'
 
 export class UpdateValetAssignment extends PartialType(CreateValetAssignment) {
   bookingId: ValetAssignment['bookingId']

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
-import { ValetsResolver } from './graphql/valets.resolver'
 import { ValetsService } from './graphql/valets.service'
+import { ValetsResolver } from './graphql/valets.resolver'
 import { ValetsController } from './rest/valets.controller'
 
 @Module({

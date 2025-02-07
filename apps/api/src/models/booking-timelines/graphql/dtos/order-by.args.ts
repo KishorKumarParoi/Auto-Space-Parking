@@ -22,9 +22,9 @@ export class BookingTimelineOrderByWithRelationInputStrict
   @Field(() => Prisma.SortOrder)
   bookingId: Prisma.SortOrder
   @Field(() => Prisma.SortOrder)
-  valetId: Prisma.SortOrder | Prisma.SortOrderInput
+  valetId: Prisma.SortOrder
   @Field(() => Prisma.SortOrder)
-  managerId: Prisma.SortOrder | Prisma.SortOrderInput
+  managerId: Prisma.SortOrder
   Booking: BookingOrderByWithRelationInput
   Valet: ValetOrderByWithRelationInput
   Manager: ManagerOrderByWithRelationInput

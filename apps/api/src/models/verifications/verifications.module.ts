@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
-import { VerificationsResolver } from './graphql/verifications.resolver'
 import { VerificationsService } from './graphql/verifications.service'
+import { VerificationsResolver } from './graphql/verifications.resolver'
 import { VerificationsController } from './rest/verifications.controller'
 
 @Module({

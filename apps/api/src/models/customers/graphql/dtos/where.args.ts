@@ -1,6 +1,13 @@
-import { InputType, PartialType } from '@nestjs/graphql'
+import { Field, InputType, PartialType } from '@nestjs/graphql'
 import { Prisma } from '@prisma/client'
-import { RestrictProperties } from 'src/common/dtos/common.input'
+import {
+  DateTimeFilter,
+  RestrictProperties,
+  StringFilter,
+} from 'src/common/dtos/common.input'
+import { BookingListRelationFilter } from 'src/models/bookings/graphql/dtos/where.args'
+import { ReviewListRelationFilter } from 'src/models/reviews/graphql/dtos/where.args'
+import { UserRelationFilter } from 'src/models/users/graphql/dtos/where.args'
 
 @InputType()
 export class CustomerWhereUniqueInput {
@@ -12,19 +19,13 @@ export class CustomerWhereInputStrict
   implements
     RestrictProperties<CustomerWhereInputStrict, Prisma.CustomerWhereInput>
 {
-  uid: string | Prisma.StringFilter<'Customer'>
-  createdAt: string | Prisma.DateTimeFilter<'Customer'> | Date
-  updatedAt: string | Prisma.DateTimeFilter<'Customer'> | Date
-  displayName: string | Prisma.StringNullableFilter<'Customer'>
-  User:
-    | (Prisma.Without<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> &
-        Prisma.UserWhereInput)
-    | (Prisma.Without<Prisma.UserWhereInput, Prisma.UserScalarRelationFilter> &
-        Prisma.UserScalarRelationFilter)
-  Bookings: Prisma.BookingListRelationFilter
-  Reviews: Prisma.ReviewListRelationFilter
-  // Todo: Add the below field decorator only to the $Enums types.
-  // @Field(() => $Enums.x)
+  User: UserRelationFilter
+  uid: StringFilter
+  createdAt: DateTimeFilter
+  updatedAt: DateTimeFilter
+  displayName: StringFilter
+  Bookings: BookingListRelationFilter
+  Reviews: ReviewListRelationFilter
 
   AND: CustomerWhereInput[]
   OR: CustomerWhereInput[]
