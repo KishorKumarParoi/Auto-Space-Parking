@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { FindManyGarageArgs, FindUniqueGarageArgs } from './dtos/find.args'
+import { Prisma } from '@prisma/client'
 import { PrismaService } from 'src/common/prisma/prisma.service'
-import { CreateGarageInput } from './dtos/create-garage.input'
-import { UpdateGarageInput } from './dtos/update-garage.input'
 import { CreateSlotInputWithoutGarageId } from 'src/models/slots/graphql/dtos/create-slot.input'
-import { Prisma, SlotType } from '@prisma/client'
+import { CreateGarageInput } from './dtos/create-garage.input'
+import { FindManyGarageArgs, FindUniqueGarageArgs } from './dtos/find.args'
+import { UpdateGarageInput } from './dtos/update-garage.input'
 
 @Injectable()
 export class GaragesService {
@@ -37,6 +37,8 @@ export class GaragesService {
         data: slotsByType,
       })
 
+      console.log('createSlots', createSlots)
+
       return createdGarage
     })
   }
@@ -51,6 +53,10 @@ export class GaragesService {
 
   update(updateGarageInput: UpdateGarageInput) {
     const { id, Address, Slots, ...data } = updateGarageInput
+
+    console.log('Address', Address)
+    console.log('Slots', Slots)
+
     return this.prisma.garage.update({
       where: { id },
       data: data,

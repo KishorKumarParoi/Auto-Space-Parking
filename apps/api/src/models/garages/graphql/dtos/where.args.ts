@@ -1,4 +1,4 @@
-import { Field, InputType, PartialType } from '@nestjs/graphql'
+import { InputType, PartialType } from '@nestjs/graphql'
 import { Prisma } from '@prisma/client'
 import {
   DateTimeFilter,
@@ -20,8 +20,7 @@ export class GarageWhereUniqueInput {
 
 @InputType()
 export class GarageWhereInputStrict
-  implements
-    RestrictProperties<GarageWhereInputStrict, Prisma.GarageWhereInput>
+  implements RestrictProperties<GarageWhereInputStrict, Prisma.GarageWhereInput>
 {
   id: IntFilter
   createdAt: DateTimeFilter

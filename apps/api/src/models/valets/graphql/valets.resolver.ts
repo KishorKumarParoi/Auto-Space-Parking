@@ -1,18 +1,18 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
-import { ValetsService } from './valets.service'
-import { Valet } from './entity/valet.entity'
-import { FindManyValetArgs, FindUniqueValetArgs } from './dtos/find.args'
-import { CreateValetInput } from './dtos/create-valet.input'
-import { UpdateValetInput } from './dtos/update-valet.input'
-import { checkRowLevelPermission } from 'src/common/auth/util'
-import { GetUserType } from 'src/common/types'
-import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
-import { PrismaService } from 'src/common/prisma/prisma.service'
-import { ValetWhereInput } from './dtos/where.args'
-import { Booking } from 'src/models/bookings/graphql/entity/booking.entity'
-import { PaginationInput } from 'src/common/dtos/common.input'
-import { BookingStatus } from '@prisma/client'
 import { BadGatewayException } from '@nestjs/common'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { BookingStatus } from '@prisma/client'
+import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
+import { checkRowLevelPermission } from 'src/common/auth/util'
+import { PaginationInput } from 'src/common/dtos/common.input'
+import { PrismaService } from 'src/common/prisma/prisma.service'
+import { GetUserType } from 'src/common/types'
+import { Booking } from 'src/models/bookings/graphql/entity/booking.entity'
+import { CreateValetInput } from './dtos/create-valet.input'
+import { FindManyValetArgs, FindUniqueValetArgs } from './dtos/find.args'
+import { UpdateValetInput } from './dtos/update-valet.input'
+import { ValetWhereInput } from './dtos/where.args'
+import { Valet } from './entity/valet.entity'
+import { ValetsService } from './valets.service'
 
 @Resolver(() => Valet)
 export class ValetsResolver {
@@ -94,6 +94,8 @@ export class ValetsResolver {
         },
       }),
     ])
+
+    console.log('bookingTimeline', bookingTimeline)
 
     return updatedBooking
   }

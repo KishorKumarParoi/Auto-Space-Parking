@@ -1,16 +1,16 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
+import { checkRowLevelPermission } from 'src/common/auth/util'
+import { PrismaService } from 'src/common/prisma/prisma.service'
+import { GetUserType } from 'src/common/types'
 import { BookingTimelinesService } from './booking-timelines.service'
-import { BookingTimeline } from './entity/booking-timeline.entity'
+import { CreateBookingTimelineInput } from './dtos/create-booking-timeline.input'
 import {
   FindManyBookingTimelineArgs,
   FindUniqueBookingTimelineArgs,
 } from './dtos/find.args'
-import { CreateBookingTimelineInput } from './dtos/create-booking-timeline.input'
 import { UpdateBookingTimelineInput } from './dtos/update-booking-timeline.input'
-import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
-import { PrismaService } from 'src/common/prisma/prisma.service'
-import { GetUserType } from 'src/common/types'
-import { checkRowLevelPermission } from 'src/common/auth/util'
+import { BookingTimeline } from './entity/booking-timeline.entity'
 
 @Resolver(() => BookingTimeline)
 export class BookingTimelinesResolver {
@@ -56,6 +56,7 @@ export class BookingTimelinesResolver {
         data: { bookingId, managerId: user.uid, status },
       }),
     ])
+    console.log('updatedBooking', updatedBooking)
     return bookingTimeline
   }
 
